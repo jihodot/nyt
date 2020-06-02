@@ -1,47 +1,52 @@
-import React from 'react';
-import PropTypes from "prop-types";
-function Food({name, picture, rating}){
-  return <div>
-    <h1>I like {name}</h1>
-    <h1>rating {rating}</h1>
-    <img src={picture} alt={name}/>
-    </div>;
-}
+import React from "react";
+import axios from "axios";
+import Movie from "./Movie";
+import "./App.css";
 
-const foodILike = [
-  {
-    id:1,
-    name: "kimch",
-    image: "https://recipe1.ezmember.co.kr/cache/recipe/2016/10/10/e1d38d22a01a5f11619e141e089f66cb1.jpg",
-    rating:1000
-  },
-  {
-    id:2,
-    name: "yoon dahye",
-    image: "https://recipe1.ezmember.co.kr/cache/recipe/2016/10/10/e1d38d22a01a5f11619e141e089f66cb1.jpg",
-    rating:10000
-  },
-  {
-    id:3,
-    name: "song jiho",
-    image: "https://recipe1.ezmember.co.kr/cache/recipe/2016/10/10/e1d38d22a01a5f11619e141e089f66cb1.jpg",
-    rating:1
+class App extends React.Component {
+  state = {
+    isLoading: true,
+    movies: []
+  };
+  getMovies = async () => {
+    const {
+      data: {
+        data: { movies }
+      }
+    } = await axios.get(
+      "https://yts-proxy.now.sh/list_movies.json?sort_by=rating"
+    );
+    this.setState({ movies, isLoading: false });
+  };
+  componentDidMount() {
+    this.getMovies();
   }
-]
-
-
-function renderFood(dish){
-  console.log(dish);
-  return <Food key={dish.id} name={dish.name} picture={dish.image} rating={dish.rating}/>
+  render() {
+    const { isLoading, movies } = this.state;
+    return (
+      <section className="container">
+        {isLoading ? (
+          <div className="loader">
+            <span className="loader__text">Loading...</span>
+          </div>
+        ) : (
+          <div className="movies">
+            {movies.map(movie => (
+              <Movie
+                key={movie.id}
+                id={movie.id}
+                year={movie.year}
+                title={movie.title}
+                summary={movie.summary}
+                poster={movie.medium_cover_image}
+                genres={movie.genres}
+              />
+            ))}
+          </div>
+        )}
+      </section>
+    );
+  }
 }
-
-Food.propTypes={
-
-}
-function App() {
-  return <div>
-      {foodILike.map(renderFood)}
-    </div>
-};
 
 export default App;
