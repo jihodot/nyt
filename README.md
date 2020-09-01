@@ -1,3 +1,1 @@
-#Movice App 2020
-
-React JS Fundamentals
+NEW YORK TIME API 이용한 
